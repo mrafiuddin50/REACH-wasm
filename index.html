@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REACH South Asia - Interactive Model</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Deck.GL and MapLibre -->
+    <script src="https://unpkg.com/deck.gl@8.9.0/dist.min.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css" rel="stylesheet" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="glass-panel" id="controls">
+        <div class="title-container">
+            <h1>REACH Web Model</h1>
+            <p class="subtitle">
+                Running entirely in your browser! 
+                <span class="info-icon" id="info-btn" title="How does this work?">?</span>
+            </p>
+        </div>
+        
+        <div class="control-group">
+            <label for="sector-select">Target Sector:</label>
+            <select id="sector-select">
+                <option value="NONE">None (Baseline)</option>
+                <option value="EGU">Power Generation (EGU)</option>
+                <option value="IND">Industry (IND)</option>
+                <option value="AWB">Agricultural Waste Burning (AWB)</option>
+                <option value="RCO">Residential & Commercial (RCO)</option>
+                <option value="TRO">Transportation (TRO)</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label for="awb-slider">Sector Emission Reduction</label>
+            <div class="slider-container">
+                <input type="range" id="awb-slider" min="0" max="100" value="0" step="5">
+                <span id="awb-value">0%</span>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <span class="stat-label" id="stat-label-text">Avg Reduction</span>
+                <span class="stat-value" id="avg-reduction">--</span>
+            </div>
+        </div>
+        
+        <div id="status" class="status-indicator">Initializing WASM Engine...</div>
+    </div>
+
+    <div id="legend" class="glass-panel legend-panel">
+        <h4>PM2.5 Reduction (&mu;g/m&sup3;)</h4>
+        <div class="legend-row"><span class="color-box" style="background: rgba(255,255,178,0.8)"></span> 0.1 - 1</div>
+        <div class="legend-row"><span class="color-box" style="background: rgba(254,204,92,0.8)"></span> 1 - 5</div>
+        <div class="legend-row"><span class="color-box" style="background: rgba(253,141,60,0.8)"></span> 5 - 10</div>
+        <div class="legend-row"><span class="color-box" style="background: rgba(240,59,32,0.8)"></span> 10 - 20</div>
+        <div class="legend-row"><span class="color-box" style="background: rgba(189,0,38,0.8)"></span> &gt; 20</div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2>How It Works</h2>
+            <p>This application runs the full physics and chemistry of the <strong>REACH model</strong> natively inside your browser, transforming gigabytes of atmospheric simulation data into an instantaneous client-side web engine.</p>
+            
+            <h3>1. Atmospheric Physics (Dispersion)</h3>
+            <p>Instead of solving the complex Gaussian Plume equations in real-time, the meteorological physics (wind speed, direction, temperature, and pollutant decay rates over 2022) are pre-compiled. We condense these massive spatial relationships into lightweight <strong>Source-Receptor (SR) matrices</strong>. These matrices encode precisely how emissions from any one district disperse into all other 1,136 districts in South Asia.</p>
+            
+            <h3>2. Secondary Aerosol Chemistry</h3>
+            <p>Once the primary dispersion is calculated via matrix multiplication, the engine runs a thermodynamic equilibrium chemistry simulation. It processes the interactions between Sulfates (SO4), Nitrates (NO3), and Ammonium (NH4) based on available Ammonia (NH3) gas, alongside Secondary Organic Aerosols (SOA). This mimics complex chemical models (like ISORROPIA) to accurately predict final PM2.5 concentrations.</p>
+            
+            <h3>3. Native Browser Architecture</h3>
+            <p>To eliminate server latency and heavy WebAssembly (WASM) initialization, the Python DataFrames were converted into flat, C-contiguous <strong>Float32 Binary Arrays</strong>. When you adjust the slider, the browser fetches these raw binaries and maps them directly into memory using Native JavaScript <code>TypedArrays</code>. The browser's V8 Engine then executes the matrix multiplications and chemistry at native C++ speeds—meaning no server, no WASM overhead, and instant calculations!</p>
+        </div>
+    </div>
+
+    <!-- The WASM App Logic -->
+    <script type="module" src="app.js"></script>
+    <script>
+        document.getElementById('info-btn').addEventListener('click', () => {
+            document.getElementById('info-modal').style.display = 'flex';
+        });
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('info-modal').style.display = 'none';
+        });
+        document.getElementById('info-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'info-modal') {
+                document.getElementById('info-modal').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

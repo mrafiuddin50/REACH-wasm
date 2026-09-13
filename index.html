@@ -54,6 +54,17 @@
         </div>
         
         <div id="status" class="status-indicator">Initializing WASM Engine...</div>
+        
+        <div class="accordion-group">
+            <button class="accordion-btn" id="inputs-btn">
+                <span>Model Inputs</span>
+                <span class="accordion-icon">&#9660;</span>
+            </button>
+            <div class="accordion-content" id="inputs-content">
+                <p><strong>Emissions Inventory:</strong> The application relies on the SMOG emission inventory for India, covering five primary sectors: Power Generation (EGU), Industry (IND), Agricultural Waste Burning (AWB), Residential & Commercial (RCO), and Transportation (TRO).</p>
+                <p><strong>Meteorology:</strong> Meteorological inputs (wind speed, wind direction, temperature, and planetary boundary layer heights) are derived from 2022 ERA5 reanalysis data to drive the dispersion physics.</p>
+            </div>
+        </div>
     </div>
 
     <div id="legend" class="glass-panel legend-panel">
@@ -95,6 +106,18 @@
         document.getElementById('info-modal').addEventListener('click', (e) => {
             if (e.target.id === 'info-modal') {
                 document.getElementById('info-modal').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('inputs-btn').addEventListener('click', () => {
+            const content = document.getElementById('inputs-content');
+            const icon = document.querySelector('#inputs-btn .accordion-icon');
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.innerHTML = '&#9660;';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.innerHTML = '&#9650;';
             }
         });
     </script>

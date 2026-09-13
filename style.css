@@ -349,3 +349,44 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: #cbd5e1;
     margin-bottom: 16px;
 }
+
+.accordion-group {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.accordion-btn {
+    background-color: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.accordion-btn:hover {
+    color: #e2e8f0;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.accordion-content p {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #cbd5e1;
+    margin: 10px 0 0 0;
+}

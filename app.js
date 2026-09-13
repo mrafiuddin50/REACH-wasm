@@ -116,7 +116,7 @@ function calculate(sector, reduction_percent) {
         } else {
             const sec_emis = sector_emissions[poll][sector];
             for (let i = 0; i < active_emis.length; i++) {
-                active_emis[i] = base_emis[i] - (sec_emis[i] * factor);
+                active_emis[i] = Math.max(0, base_emis[i] - (sec_emis[i] * factor));
             }
         }
         
